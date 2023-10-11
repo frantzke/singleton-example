@@ -1,0 +1,358 @@
+{
+	"info": {
+		"_postman_id": "9ddc52f7-44ac-4bb4-9e9b-87bcf1cb43f4",
+		"name": "Example-Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21506003"
+	},
+	"item": [
+		{
+			"name": "Fetch Todos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('array'); \r",
+							"    // pm.expect(responseData.length).to.equal(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5678/todos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5678",
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Response status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"The id field should be a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.id).to.be.a('number');\r",
+							"    pm.expect(responseData.id).to.be.greaterThan(-1);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the 'item' field is a non-empty string\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.item).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate that 'completed' field is a boolean value\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.completed).to.be.a('boolean');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is within acceptable range\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// save the `item_id` returned in the response as an environment variable\r",
+							"let jsonResponse = pm.response.json();\r",
+							"pm.environment.set(\"todoId\", jsonResponse.id);\r",
+							"pm.environment.set(\"todoName\", jsonResponse.item);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"item\": \"Drink Water\",\r\n    \"completed\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5678/todos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5678",
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Todo Added",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the response body has the required fields - id, item, completed\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.property('id');\r",
+							"    pm.expect(responseData).to.have.property('item');\r",
+							"    pm.expect(responseData).to.have.property('completed');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'id' is a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.id).to.be.a('number');\r",
+							"    pm.expect(responseData.id).to.be.at.least(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'item' is a non-empty string\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.item).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'completed' is a boolean value\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.completed).to.be.a('boolean');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5678/todos/{{todoId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5678",
+					"path": [
+						"todos",
+						"{{todoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Todo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Response status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"The id field should be a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.id).to.be.a('number');\r",
+							"    pm.expect(responseData.id).to.be.greaterThan(-1);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the 'item' field is a non-empty string\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.item).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate that 'completed' field is a boolean value\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.completed).to.be.a('boolean');\r",
+							"    pm.expect(responseData.completed).to.equal(true);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is within acceptable range\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+							"});\r",
+							"\r",
+							"// save the `item_id` returned in the response as an environment variable\r",
+							"let jsonResponse = pm.response.json();\r",
+							"pm.environment.set(\"todoId\", jsonResponse.id);\r",
+							"pm.environment.set(\"todoName\", jsonResponse.item);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"completed\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5678/todos/{{todoId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5678",
+					"path": [
+						"todos",
+						"{{todoId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Todo Updated",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate the response body has the required fields - id, item, completed\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.property('id');\r",
+							"    pm.expect(responseData).to.have.property('item');\r",
+							"    pm.expect(responseData).to.have.property('completed');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'id' is a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.id).to.be.a('number');\r",
+							"    pm.expect(responseData.id).to.be.at.least(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'item' is a non-empty string\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.item).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Verify that the 'completed' is a boolean value\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.completed).to.be.a('boolean');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify that the 'completed' is a true\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData.completed).to.equal(true);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5678/todos/{{todoId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5678",
+					"path": [
+						"todos",
+						"{{todoId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "Todo Id",
+			"value": "{{todoId}}"
+		},
+		{
+			"key": "todoId",
+			"value": "565"
+		}
+	]
+}
